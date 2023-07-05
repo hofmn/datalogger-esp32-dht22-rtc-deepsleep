@@ -11,3 +11,11 @@ Since the chip will go into deep sleep to save battery, we are going to add an R
 - Battery Module
 - SD Card Module
 - RTC Module: An RTC module will be integrated into the system to accurately measure and maintain the time even when the microcontroller is in deep sleep mode.
+
+## Features
+
+- Logging: The data logger will record humidity and temperature measurements at regular intervals and store them on the SD card.
+- Battery-powered: The data logger will operate using batteries, providing portability and allowing it to be used in remote or off-grid locations.
+- Deep sleep: To conserve power, the microcontroller will enter deep sleep mode between measurements, extending the battery life.
+- Accurate timekeeping: The RTC module will ensure precise time measurements, even when the microcontroller is in deep sleep mode.
+- Easy data retrieval: The logged data can be easily retrieved by accessing the SD card.
