@@ -1,2 +1,5 @@
-DataLogger
-This project aims to create a data logger using an ESP32 microcontroller and an SCD22 sensor to log humidity and temperature measurements. The data logger will operate independently of the power grid by utilizing a battery module and an SD card module for data storage. To ensure accurate time measurements while the chip is in deep sleep mode, an RTC (Real-Time Clock) will be incorporated into the project.
+# datalogger
+
+Logging humidity and temperature with an ESP32 and SCD22 sensor.
+The Sensor should work off grid so a battery- and SD card module will be included in this project.
+Since the chip will go into deep sleep to save battery, we are going to add an RTC to accurately measure the time.
