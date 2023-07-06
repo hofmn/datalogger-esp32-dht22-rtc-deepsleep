@@ -19,3 +19,10 @@ Since the chip will go into deep sleep to save battery, we are going to add an R
 - Deep sleep: To conserve power, the microcontroller will enter deep sleep mode between measurements, extending the battery life.
 - Accurate timekeeping: The RTC module will ensure precise time measurements, even when the microcontroller is in deep sleep mode.
 - Easy data retrieval: The logged data can be easily retrieved by accessing the SD card.
+
+## Acknowledgments
+
+Parts of this project were inspired by the work of Rui Santos from RandomNerdTutorials.com. 
+
+For more details and tutorials, you can visit [https://RandomNerdTutorials.com](https://RandomNerdTutorials.com).
+
