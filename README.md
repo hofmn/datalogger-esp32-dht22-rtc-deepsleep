@@ -20,6 +20,23 @@ Since the chip will go into deep sleep to save battery, we are going to add an R
 - Accurate timekeeping: The RTC module will ensure precise time measurements, even when the microcontroller is in deep sleep mode.
 - Easy data retrieval: The logged data can be easily retrieved by accessing the SD card.
 
+## Getting Started
+
+### Hardware Setup
+
+1. Connect the DHT22 sensor to the ESP32 board as follows:
+   - VCC pin of the DHT22 to the 3.3V pin of the ESP32.
+   - GND pin of the DHT22 to the GND pin of the ESP32.
+   - Data pin of the DHT22 to a digital pin (e.g., D35) of the ESP32.
+
+2. Connect the SD card module to the ESP32 board as follows:
+   - VCC pin of the SD card module to the 3.3V pin of the ESP32.
+   - GND pin of the SD card module to the GND pin of the ESP32.
+   - MISO pin of the SD card module to the GPIO pin (e.g., D18) of the ESP32.
+   - MOSI pin of the SD card module to the GPIO pin (e.g., D23) of the ESP32.
+   - SCK pin of the SD card module to the GPIO pin (e.g., D19) of the ESP32.
+   - CS pin of the SD card module to the GPIO pin (e.g., D5) of the ESP32.
+
 ## Acknowledgments
 
 Parts of this project were inspired by the work of Rui Santos from RandomNerdTutorials.com. 
