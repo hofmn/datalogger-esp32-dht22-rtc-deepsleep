@@ -43,6 +43,7 @@ void sdCardSetup(){
   Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
 
+//Alle Alarme ausschalten und unnötige Ressourcen begrenzen -- hinzufügen
 void rtcSetup(){
   if (!rtc.begin()) {
     Serial.println("Couldnt´t find RTC");
