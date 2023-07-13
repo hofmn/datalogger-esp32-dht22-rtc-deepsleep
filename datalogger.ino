@@ -43,13 +43,20 @@ void sdCardSetup(){
   Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
 
-//Alle Alarme ausschalten und unnötige Ressourcen begrenzen -- hinzufügen
+
 void rtcSetup(){
   if (!rtc.begin()) {
     Serial.println("Couldnt´t find RTC");
     appendFile(SD, fileName, "--- Couldn't find RTC --- \n");
-    while(1);
+    return;
   }
+  rtc.clearAlarm(1);
+  rtc.clearAlarm(2);
+  rtc.disableAlarm(1);
+  rtc.disableAlarm(2);
+  rtc.disable32K();
+  rtc.writeSqwPinMode(DS3231_OFF);
+
   if (rtc.lostPower()) {
     rtc.adjust(DateTime(F(__DATE__),F(__TIME__)));
     Serial.println("RTC lost power");
@@ -79,6 +86,7 @@ void writeData(float t, float h, String ID){
 
 void setup(){
   Serial.begin(115200);
+  delay(1000);
   sdCardSetup();
   delay(1000);
   rtcSetup();
@@ -88,5 +96,6 @@ void setup(){
   esp_deep_sleep(55*1000000);
 }
 
-void loop() {
+void loop(){
+  //This is not going to be called
 }
