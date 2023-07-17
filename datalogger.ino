@@ -11,11 +11,30 @@
 #define dataloggerID "left"
 #define dhtPin 17
 #define dhtType DHT22
+#define sensivity (3.3 / 4095.0)
+#define measurementRatio (5/3.3)
+#define minVoltage (2.75*measurementRatio)
+#define maxVoltage (4.2*measurementRatio)
 
 DHT dht(dhtPin, dhtType);
 RTC_DS3231 rtc;
 float t;
 float h;
+float batteryPercentage;
+
+float mapf(float analog_read, float min_Voltage, float max_voltage, 
+float zero, float hundred) {
+ float a = analog_read - min_Voltage;
+ float b = hundred - zero;
+ float c = max_voltage - min_Voltage;
+ return a * b / c + zero;
+}
+
+void batterySetup(){
+  float rawADC = analogRead(A0);
+  float processedADC = rawADC*sensivity;
+  batteryPercentage = mapf(processedADC, minVoltage, maxVoltage, 0, 100);
+}
 
 void appendFile(fs::FS &fs, const char * path, const char * message){
   Serial.printf("Appending to file: %s\n", path);
@@ -42,7 +61,6 @@ void sdCardSetup(){
   Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
   Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
-
 
 void rtcSetup(){
   if (!rtc.begin()) {
@@ -75,27 +93,25 @@ void dhtSetup(){
   }
 }
 
-void writeData(float t, float h, String ID){
+void writeData(){
   DateTime now = rtc.now();
   String time = String(now.unixtime());
-  String writeData = "hydro_greenhouse,position=" + ID + " temp=" + String(t) 
-  + ",hum=" + String(h) + " " + time + "\n";
+  String writeData = "hydro_greenhouse,position=" + String(dataloggerID) + " temp=" + String(t) 
+  + ",hum=" + String(h) + ",bat=" + String(batteryPercentage) + " " + time + "\n";
   appendFile(SD, fileName, (writeData).c_str());
   Serial.print(writeData);
 }
 
 void setup(){
+  delay(1000);
   Serial.begin(115200);
-  delay(1000);
+  batterySetup();
   sdCardSetup();
-  delay(1000);
   rtcSetup();
-  delay(1000);
   dhtSetup();
-  writeData(t, h, dataloggerID);
-  esp_deep_sleep(55*1000000);
+  writeData();
+  esp_deep_sleep(5500000);
 }
 
 void loop(){
-  //This is not going to be called
 }
