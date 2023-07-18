@@ -6,57 +6,45 @@
 #include <Wire.h>
 #include <RTClib.h>
 
-
+// Define Name and ID of the Datalogger here, to easily change later
 #define fileName "/data.txt"
 #define dataloggerID "left"
-#define dhtPin 17
+// Define DHT-Sensor Type and Pin for Sensor input
 #define dhtType DHT22
-#define sensivity (3.3 / 4095.0)
-#define measurementRatio (5/3.3)
-#define minVoltage (2.75/measurementRatio)
+#define dhtPin 17
+// Define some parameters to measure the battery state
+#define sensivity (3.3 / 4095.0) // The max. input value of the ESP32 is 3.3V and the resolution is 16 bits, so 2^16 = 4095
+#define measurementRatio (5/3.3) // Since the voltage of the battery can be higher than 3.3V, we connect it to the 5V pin of the ESP and use a voltage divider to measure it at a GPIO pin.
+#define minVoltage (2.75/measurementRatio) // The min and max voltage depend on the battery and should be found in the datasheet
 #define maxVoltage (4.2/measurementRatio)
-
-DHT dht(dhtPin, dhtType);
-RTC_DS3231 rtc;
-float t;
-float h;
 float batteryPercentage;
 
-float mapf(float analog_read, float min_Voltage, float max_voltage, 
-float zero, float hundred) {
- float a = analog_read - min_Voltage;
- float b = hundred - zero;
- float c = max_voltage - min_Voltage;
- return a * b / c + zero;
-}
+RTC_DS3231 rtc;
 
-void batterySetup(){
-  float rawADC = analogRead(A0);
-  Serial.println("RawADC: " + String(rawADC));
-  float processedADC = rawADC*sensivity;
-  Serial.println("processedADC: " + String(processedADC));
-  batteryPercentage = mapf(processedADC, minVoltage, maxVoltage, 0, 100);
-  Serial.println("batteryPercentage: " + String(batteryPercentage));
-}
+DHT dht(dhtPin, dhtType);
+float t;
+float h;
 
-void appendFile(fs::FS &fs, const char * path, const char * message){
+// Function to append data to a file
+void appendFile(fs::FS &fs, const char *path, const char *message) {
   Serial.printf("Appending to file: %s\n", path);
 
   File file = fs.open(path, FILE_APPEND);
-  if(!file){
+  if (!file) {
     Serial.println("Failed to open file for appending");
     return;
   }
-  if(file.print(message)){
-      Serial.println("Message appended");
+  if (file.print(message)) {
+    Serial.println("Message appended");
   } else {
     Serial.println("Append failed");
   }
   file.close();
 }
 
-void sdCardSetup(){
-  if(!SD.begin(5)){
+// Function to set up the SD card
+void sdCardSetup() {
+  if (!SD.begin(5)) {
     Serial.println("Card Mount Failed");
     return;
   }
@@ -65,9 +53,29 @@ void sdCardSetup(){
   Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 }
 
-void rtcSetup(){
+// Function to map a float value from one range to another
+float mapf(float analog_read, float min_Voltage, float max_voltage,
+           float zero, float hundred) {
+  float a = analog_read - min_Voltage;
+  float b = hundred - zero;
+  float c = max_voltage - min_Voltage;
+  return a * b / c + zero;
+}
+
+// Function to set up the battery measurement
+void batterySetup() {
+  float rawADC = analogRead(A0);
+  Serial.println("RawADC: " + String(rawADC));
+  float processedADC = rawADC * sensivity;
+  Serial.println("processedADC: " + String(processedADC));
+  batteryPercentage = mapf(processedADC, minVoltage, maxVoltage, 0, 100);
+  Serial.println("batteryPercentage: " + String(batteryPercentage));
+}
+
+// Function to set up the RTC (Real-Time Clock)
+void rtcSetup() {
   if (!rtc.begin()) {
-    Serial.println("Couldnt´t find RTC");
+    Serial.println("Couldn't find RTC");
     appendFile(SD, fileName, "--- Couldn't find RTC --- \n");
     return;
   }
@@ -79,33 +87,35 @@ void rtcSetup(){
   rtc.writeSqwPinMode(DS3231_OFF);
 
   if (rtc.lostPower()) {
-    rtc.adjust(DateTime(F(__DATE__),F(__TIME__)));
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     Serial.println("RTC lost power");
     appendFile(SD, fileName, "--- RTC LOST POWER --- \n");
   }
 }
 
-void dhtSetup(){
+// Function to set up the DHT sensor
+void dhtSetup() {
   dht.begin();
   delay(2000);
   h = dht.readHumidity();
   t = dht.readTemperature();
-    if (isnan(h) || isnan(t)) {
+  if (isnan(h) || isnan(t)) {
     Serial.println(F("Failed to read from DHT sensor!"));
     appendFile(SD, fileName, "--- DHT READ FAILED --- \n");
   }
 }
 
-void writeData(){
+// Function to write data to the file in the inline Influxdb format
+void writeData() {
   DateTime now = rtc.now();
   String time = String(now.unixtime());
-  String writeData = "hydro_greenhouse,position=" + String(dataloggerID) + " temp=" + String(t) 
-  + ",hum=" + String(h) + ",bat=" + String(batteryPercentage) + " " + time + "\n";
+  String writeData = "hydro_greenhouse,position=" + String(dataloggerID) + " temp=" + String(t) +
+                     ",hum=" + String(h) + ",bat=" + String(batteryPercentage) + " " + time + "\n";
   appendFile(SD, fileName, (writeData).c_str());
   Serial.print(writeData);
 }
 
-void setup(){
+void setup() {
   delay(1000);
   Serial.begin(115200);
   batterySetup();
@@ -116,5 +126,6 @@ void setup(){
   esp_deep_sleep(5500000);
 }
 
-void loop(){
-  }
+void loop() {
+  // Empty loop as there's no need for continuous execution
+}
