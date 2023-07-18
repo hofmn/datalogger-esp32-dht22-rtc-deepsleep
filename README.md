@@ -56,6 +56,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 Parts of this project were inspired by the work of Rui Santos from RandomNerdTutorials.com. For more details and tutorials, you can visit [https://RandomNerdTutorials.com](https://RandomNerdTutorials.com).
-```
-
-Make sure to include a file named "LICENSE" in the root directory of your project, containing the full text of the MIT License or the license of your choice.
