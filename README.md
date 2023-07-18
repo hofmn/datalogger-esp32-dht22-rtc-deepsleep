@@ -22,8 +22,6 @@ Logging humidity and temperature with an ESP32 and SCD22 sensor. The Sensor shou
 
 ### Hardware Setup
 
-### Hardware Setup
-
 1. Connect the DHT22 sensor to the ESP32 board as follows:
    - VCC pin of the DHT22 to the 3.3V pin of the ESP32.
    - GND pin of the DHT22 to the GND pin of the ESP32.
