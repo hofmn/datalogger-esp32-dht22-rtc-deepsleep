@@ -13,8 +13,8 @@
 #define dhtType DHT22
 #define sensivity (3.3 / 4095.0)
 #define measurementRatio (5/3.3)
-#define minVoltage (2.75*measurementRatio)
-#define maxVoltage (4.2*measurementRatio)
+#define minVoltage (2.75/measurementRatio)
+#define maxVoltage (4.2/measurementRatio)
 
 DHT dht(dhtPin, dhtType);
 RTC_DS3231 rtc;
@@ -32,8 +32,11 @@ float zero, float hundred) {
 
 void batterySetup(){
   float rawADC = analogRead(A0);
+  Serial.println("RawADC: " + String(rawADC));
   float processedADC = rawADC*sensivity;
+  Serial.println("processedADC: " + String(processedADC));
   batteryPercentage = mapf(processedADC, minVoltage, maxVoltage, 0, 100);
+  Serial.println("batteryPercentage: " + String(batteryPercentage));
 }
 
 void appendFile(fs::FS &fs, const char * path, const char * message){
@@ -114,4 +117,4 @@ void setup(){
 }
 
 void loop(){
-}
+  }
