@@ -5,7 +5,7 @@ Logging humidity and temperature with an ESP32 and SCD22 sensor. The Sensor shou
 ## Components
 
 - ESP32 Microcontroller
-- SCD22 Sensor
+- DHT22 Sensor
 - Battery Module
 - SD Card Module
 - RTC Module
